@@ -1,8 +1,16 @@
 {
+    "config" : {
+        "sound" : false,
+        "music" : false
+    },
     "level1":{
         "meteors": {
             "velocityMeteor" : 13000,
             "frequencyMeteor" : 3
+        },
+        "stars" : {
+            "velocityStar" : 10000,
+            "frequencyStar" : 5
         },
         "ships" : [
             {"x": 100, "y": 50, "scale": 1, "alias": "ship"},
