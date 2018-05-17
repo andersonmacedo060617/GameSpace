@@ -1,6 +1,6 @@
 {
     "config" : {
-        "sound" : true,
+        "sound" : false,
         "music" : false
     },
     "level1":{
@@ -9,8 +9,8 @@
             "frequencyMeteor" : 3
         },
         "stars" : {
-            "velocityStar" : 10000,
-            "frequencyStar" : 5
+            "velocityStar" : 11000,
+            "frequencyStar" : 10
         },
         "ships" : [
             {"x": 100, "y": 50, "scale": 1, "alias": "ship"},
@@ -23,15 +23,16 @@
         "rocket" : {
             "alias" : "rocket",
             "scaleX" : 0.5,
-            "scaleY" : 0.5
+            "scaleY" : 0.5,
+            "life" : 3
         },
         "mothership": {
             "alias" : "mothership",
             "scaleX": 2,
             "scaleY": 2,
-            "maxPositionY" : 150,
-            "minPositionY" : 45,
-            "speedMovingY" : 1
+            "maxPositionX" : 800,
+            "minPositionX" : 200,
+            "speedMovingX" : 2
         },
 
 

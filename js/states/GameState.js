@@ -18,7 +18,6 @@ GameSpace.GameState = {
         this.game.world.setBounds(0, 0, 1000, 592);
 
         this.score = 0;
-        this.life = 3;
 
     },
 
@@ -57,7 +56,11 @@ GameSpace.GameState = {
 
         //faz parse de arquivos json
         this.levelData = JSON.parse(this.game.cache.getText('level'));
+        this.habilitaNave == false;
 
+
+
+        this.life = this.levelData.level1.rocket.life;
         this.sound['fire'] = game.add.audio('soundFire');
         this.sound['music'] = game.add.audio('music');
 
@@ -66,6 +69,7 @@ GameSpace.GameState = {
         }
 
         this.background1 = this.game.add.sprite(0, 0, 'background1');
+
 
 
         this.fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
@@ -96,6 +100,11 @@ GameSpace.GameState = {
             0.5
         );
 
+        this.stars = this.add.group();
+        this.stars.enableBody = true;
+
+        this.meteors = this.add.group();
+        this.meteors.enableBody = true;
 
         this.rocketTail.animations.add('run', null, 5, true);
 
@@ -103,7 +112,7 @@ GameSpace.GameState = {
         this.rocket.animations.add('rocket_left', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 5, true);
         this.rocket.animations.add('rocket_right', [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31], 5, true);
         this.rocket.play('rocket_center');
-        game.physics.arcade.enable(this.rocket);
+        this.game.physics.arcade.enable(this.rocket);
         this.rocket.enableBody = true;
         // this.rocket.body.drag.set(70);
         this.rocket.body.maxVelocity.set(100);
@@ -112,18 +121,7 @@ GameSpace.GameState = {
 
         /*Fim Rocket*/
 
-        //Mothership
-        this.mothership = this.criaSprite(
-            this.game.world.centerX,
-            150,
-            this.levelData.level1.mothership.alias,
-            this.levelData.level1.mothership.scaleX,
-            this.levelData.level1.mothership.scaleY,
-            0.5,
-            0.5
-        );
-        this.mothership.movingPositive = true;
-
+        
 
         // this.fire.animations.add('fire1', null, 10, true);
         this.fire.trackSprite(this.rocket, 0, 0, false);
@@ -137,26 +135,24 @@ GameSpace.GameState = {
         this.fire.fireRate = 100;
         //console.log(this.rocket);
 
-        this.createShips();
-
+        
         //cria meteoros
         this.createMeteors();
-        this.loopCratorMeteor = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.meteors.frequencyMeteor, this.createMeteors, this);
+        this.loopCreatorMeteor = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.meteors.frequencyMeteor, this.createMeteors, this);
 
-        this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.stars.frequencyStar, this.createStar, this);
+        this.loopCreatorStar = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.stars.frequencyStar, this.createStar, this);
 
 
-        this.txtHUD = this.add.text(16, 16, 'SCORE: ' + this.score, {fontSize: '32px', fill: '#D0171B'});
-
+        this.criaHUD(); 
 
     },
 
     update: function () {
 
 
-        this.animationShips();
+        //this.animationShips();
 
-        this.animationMothership();
+        //this.animationMothership();
 
         this.rocketDrive();
 
@@ -164,16 +160,15 @@ GameSpace.GameState = {
         this.fire.fireAngle = this.rocket.angle - 90;
 
 
-        this.game.physics.arcade.overlap(this.rocket, this.meteors, null, this.morre, this);
+
+        this.game.physics.arcade.overlap(this.rocket, this.meteors, null, this.morreMeteor, this);
         this.game.physics.arcade.overlap(this.rocket, this.stars, null, this.coletarEstrelas, this);
         this.game.physics.arcade.overlap(this.fire, this.meteors, null, this.destroiMeteoro, this);
-
+        this.game.physics.arcade.overlap(this.rocket, this.mothership, null, this.morreMothership, this);
 
     },
 
     createMeteors: function () {
-        this.meteors = this.add.group();
-        this.meteors.enableBody = true;
 
         var sideInit = Math.floor((Math.random() * 4));
         //console.log(sideInit);
@@ -199,31 +194,28 @@ GameSpace.GameState = {
             finalY = Math.floor((Math.random() * 552) + 20);
         } else if (sideInit == 2) {//sideInit 2 Topo da tela
             initX = Math.floor((Math.random() * 960) + 20);
-            ;
             initY = -200;
             finalX = Math.floor((Math.random() * 960) + 20);
             finalY = 700;
         } else {// senão parte inferior da tela
             initX = Math.floor((Math.random() * 960) + 20);
-            ;
             initY = 700;
             finalX = Math.floor((Math.random() * 960) + 20);
             finalY = -200;
         }
 
 
+
         // tamanho gerado de forma random
         var sizeMeteor = Math.floor((Math.random() * 2) + 1);
 
-        var meteor = this.meteors.getFirstExists(false);
+        //var meteor = this.meteors.getFirstExists(false);
 
-        if (!meteor) {
-            meteor = this.meteors.create(initX, initY, 'meteor' + Math.floor((Math.random() * 3) + 1));
-        }
+        meteor = this.meteors.create(initX, initY, 'meteor' + Math.floor((Math.random() * 3) + 1));
+
 
         var meteorMoving = this.game.add.tween(meteor);
         meteorMoving.to({x: finalX, y: finalY}, this.levelData.level1.meteors.velocityMeteor);
-        
 
         meteor.scale.setTo((sizeMeteor * 0.5) + 0.5);
         meteor.anchor.setTo(0.5);
@@ -288,22 +280,26 @@ GameSpace.GameState = {
 
 
     animationMothership: function () {
-        var maxPositionY = this.levelData.level1.mothership.maxPositionY;
-        var minPositionY = this.levelData.level1.mothership.minPositionY;
-        var speedMovingY = this.levelData.level1.mothership.speedMovingY;
-        var positionY = this.mothership.position.y;
+        var maxPositionX = this.levelData.level1.mothership.maxPositionX;
+        var minPositionX = this.levelData.level1.mothership.minPositionX;
+        var speedMovingX = this.levelData.level1.mothership.speedMovingX;
+        var positionX = this.mothership.position.x;
 
 
-        if (this.mothership.movingPositive && positionY < maxPositionY) {
-            this.mothership.position.y += speedMovingY;
-        } else if (!this.mothership.movingPositive && positionY > minPositionY) {
-            this.mothership.position.y += -speedMovingY;
-        } else if (this.mothership.movingPositive && positionY >= maxPositionY) {
+        if (this.mothership.movingPositive && positionX < maxPositionX) {
+            
+            this.mothership.position.x += speedMovingX;
+        } else if (!this.mothership.movingPositive && positionX > minPositionX) {
+            
+            this.mothership.position.x += -speedMovingX;
+        } else if (this.mothership.movingPositive && positionX >= maxPositionX) {
+            
             this.mothership.movingPositive = false;
-            this.mothership.position.y = maxPositionY;
-        } else if (!this.mothership.movingPositive && positionY <= minPositionY) {
+            this.mothership.position.X = maxPositionX;
+        } else if (!this.mothership.movingPositive && positionX <= minPositionX) {
+            
             this.mothership.movingPositive = true;
-            this.mothership.position.y = minPositionY;
+            this.mothership.position.x = minPositionX;
         }
     },
 
@@ -365,15 +361,10 @@ GameSpace.GameState = {
     },
 
     createStar: function () {
-        this.stars = this.add.group();
 
-        this.stars.enableBody = true;
+       // var star = this.stars.getFirstExists(false);
 
-        var star = this.stars.getFirstExists(false);
-
-        if (!star) {
-            star = this.stars.create(Math.floor((Math.random() * 960) + 20), -100, 'star');
-        }
+        star = this.stars.create(Math.floor((Math.random() * 960) + 20), -100, 'star');
 
         var starMoving = this.game.add.tween(star);
         starMoving.to({x: Math.floor((Math.random() * 960) + 20), y: 1200}, this.levelData.level1.stars.velocityStar);
@@ -388,15 +379,39 @@ GameSpace.GameState = {
         this.txtHUD.text = 'SCORE: ' + this.score;
 
 
-        if (this.score == 50) {
-            game.state.start('GameState');
+        if (this.score == 10 && this.habilitaNave == false) {
+            this.loopCreatorStar.loop = false;
+            this.habilitaNave == true;
+           
+
+            //Mothership
+            this.mothership = this.criaSprite(
+                this.game.world.centerX,
+                -200,
+                this.levelData.level1.mothership.alias,
+                this.levelData.level1.mothership.scaleX,
+                this.levelData.level1.mothership.scaleY,
+                0.5,
+                0.5
+            );
+            this.mothership.enableBody = true;
+            this.mothership.movingPositive = true;
+
+            var mothershipMoving = this.game.add.tween(this.mothership);
+            mothershipMoving.to({y: 200}, 10000);
+            mothershipMoving.start();
+
+            this.loopMovingMotherShip = this.game.time.events.loop(Phaser.Timer.SECOND * 0.03, this.animationMothership, this);
+
+            //game.state.start('GameState');
         }
     },
 
-    morre : function () {
+    morreMeteor : function (rocket, meteor) {
+        meteor.kill();
 
-        console.log(this.life);
         this.life -= 1;
+        this.lifeHUD.text = " X " + this.life;
 
         if(this.life == 0){
             game.state.start('GameState');
@@ -404,12 +419,21 @@ GameSpace.GameState = {
 
     },
 
+    morreMothership : function(){
+        game.state.start('GameState');
+    },
+
     destroiMeteoro : function (fire, meteor) {
         meteor.kill();
+    },
+
+
+
+    criaHUD : function  (){
+        this.txtHUD = this.add.text(16, 16, 'SCORE: ' + this.score, {fontSize: '32px', fill: '#D0171B'});
+        this.rocketHUD = this.game.add.sprite(this.game.world.width - 120, 16, 'rocket');
+        this.rocketHUD.scale.setTo(0.35);
+        this.lifeHUD = this.add.text(this.game.world.width - 90, 16, " X " + this.levelData.level1.rocket.life, {fontSize: '32px', fill: '#D0171B'})
     }
-
-
-
-
 
 }
