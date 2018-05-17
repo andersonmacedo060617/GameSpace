@@ -1,6 +1,6 @@
 {
     "config" : {
-        "sound" : false,
+        "sound" : true,
         "music" : false
     },
     "level1":{

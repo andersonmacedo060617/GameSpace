@@ -48,11 +48,22 @@ GameSpace.GameState = {
         //carregar arquivo de dados - Configurações json
         this.load.text('level', 'assets/data/level.json');
 
+        this.load.audio('music', 'assets/sound/music.mp3');
+        this.load.audio('soundFire', 'assets/sound/fire.mp3');
+
     },
 
     create: function () {
+
         //faz parse de arquivos json
         this.levelData = JSON.parse(this.game.cache.getText('level'));
+
+        this.sound['fire'] = game.add.audio('soundFire');
+        this.sound['music'] = game.add.audio('music');
+
+        if(this.levelData.config.music){
+            this.sound['music'].play();
+        }
 
         this.background1 = this.game.add.sprite(0, 0, 'background1');
 
@@ -129,7 +140,8 @@ GameSpace.GameState = {
         this.createShips();
 
         //cria meteoros
-        this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.meteors.frequencyMeteor, this.createMeteors, this);
+        this.createMeteors();
+        this.loopCratorMeteor = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.meteors.frequencyMeteor, this.createMeteors, this);
 
         this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.stars.frequencyStar, this.createStar, this);
 
@@ -148,16 +160,13 @@ GameSpace.GameState = {
 
         this.rocketDrive();
 
-        // if(this.cursors.up.isDown){
-        //     console.log('fire');
-        //     this.createFire();
-        // }
 
         this.fire.fireAngle = this.rocket.angle - 90;
 
-        this.game.physics.arcade.overlap(this.rocket, this.stars, null, this.coletarEstrelas, this);
+
         this.game.physics.arcade.overlap(this.rocket, this.meteors, null, this.morre, this);
-        this.game.physics.arcade.overlap(this.fire, this.meteors, this.destroiMeteoro);
+        this.game.physics.arcade.overlap(this.rocket, this.stars, null, this.coletarEstrelas, this);
+        this.game.physics.arcade.overlap(this.fire, this.meteors, null, this.destroiMeteoro, this);
 
 
     },
@@ -212,18 +221,17 @@ GameSpace.GameState = {
             meteor = this.meteors.create(initX, initY, 'meteor' + Math.floor((Math.random() * 3) + 1));
         }
 
+        var meteorMoving = this.game.add.tween(meteor);
+        meteorMoving.to({x: finalX, y: finalY}, this.levelData.level1.meteors.velocityMeteor);
+        
 
         meteor.scale.setTo((sizeMeteor * 0.5) + 0.5);
         meteor.anchor.setTo(0.5);
 
-        meteor.vlrAngle = sizeMeteor / 5;
-        meteor.rotatePositive = true;
+
         meteor.animations.add('spin', null, 5, true);
         meteor.play('spin');
-        //var meteorMoving = this.game.add.tween(meteor).to({x : finalX, y:finalY}, this.levelData.level1.meteors.velocityMeteor, Phaser.Easing.Quadratic.InOut, false, 0, 1000, false);
 
-        var meteorMoving = this.game.add.tween(meteor);
-        meteorMoving.to({x: finalX, y: finalY}, this.levelData.level1.meteors.velocityMeteor);
 
 
         meteorMoving.start();
@@ -337,10 +345,10 @@ GameSpace.GameState = {
 
     },
 
-    // render : function() {
-    //     game.debug.spriteInfo(this.rocket, 32, 100);
-    //
-    // },
+     render : function() {
+        //game.debug.spriteInfo(this.rocket, 32, 100);
+        
+     },
 
     //criando os sons do jogo
     playSound: function (soundType) {
@@ -385,10 +393,9 @@ GameSpace.GameState = {
         }
     },
 
-    morre : function (rocket, meteor) {
+    morre : function () {
 
         console.log(this.life);
-        meteor.kill();
         this.life -= 1;
 
         if(this.life == 0){
