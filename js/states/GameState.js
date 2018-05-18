@@ -61,6 +61,7 @@ GameSpace.GameState = {
 
 
         this.life = this.levelData.level1.rocket.life;
+        this.lifeMothership = this.levelData.level1.mothership.life;
         this.sound['fire'] = game.add.audio('soundFire');
         this.sound['music'] = game.add.audio('music');
 
@@ -78,7 +79,6 @@ GameSpace.GameState = {
 
 
         /* Rocket */
-        this.player = this.add.group();
 
         this.rocketTail = this.criaSprite(
             this.game.world.centerX,
@@ -102,6 +102,9 @@ GameSpace.GameState = {
 
         this.stars = this.add.group();
         this.stars.enableBody = true;
+
+        this.ships = this.add.group();
+        this.ships.enableBody = true;
 
         this.meteors = this.add.group();
         this.meteors.enableBody = true;
@@ -163,9 +166,10 @@ GameSpace.GameState = {
 
         this.game.physics.arcade.overlap(this.rocket, this.meteors, null, this.morreMeteor, this);
         this.game.physics.arcade.overlap(this.rocket, this.stars, null, this.coletarEstrelas, this);
-        this.game.physics.arcade.overlap(this.fire, this.meteors, null, this.destroiMeteoro, this);
+        this.game.physics.arcade.overlap(this.fire.bullets, this.meteors, null, this.destroiMeteoro, this);
         this.game.physics.arcade.overlap(this.rocket, this.mothership, null, this.morreMothership, this);
-
+        this.game.physics.arcade.overlap(this.rocket, this.ships, null, this.overlapRocketShip, this);
+        this.game.physics.arcade.overlap(this.mothership, this.fire.bullets, null, this.detroiMothership, this);
     },
 
     createMeteors: function () {
@@ -379,7 +383,7 @@ GameSpace.GameState = {
         this.txtHUD.text = 'SCORE: ' + this.score;
 
 
-        if (this.score == 10 && this.habilitaNave == false) {
+        if (this.score == this.levelData.level1.pointsObjective) {
             this.loopCreatorStar.loop = false;
             this.habilitaNave == true;
            
@@ -387,13 +391,18 @@ GameSpace.GameState = {
             //Mothership
             this.mothership = this.criaSprite(
                 this.game.world.centerX,
-                -200,
+                -100,
                 this.levelData.level1.mothership.alias,
                 this.levelData.level1.mothership.scaleX,
                 this.levelData.level1.mothership.scaleY,
                 0.5,
                 0.5
             );
+            game.physics.arcade.enable(this.mothership);
+
+            this.lifeMothershipHUD = this.add.text(this.game.world.centerX, 50, "Mothership - " + this.lifeMothership, {fontSize: '20px', fill: '#D0171B'})
+            this.lifeMothershipHUD.anchor.setTo(0.5);
+
             this.mothership.enableBody = true;
             this.mothership.movingPositive = true;
 
@@ -402,7 +411,7 @@ GameSpace.GameState = {
             mothershipMoving.start();
 
             this.loopMovingMotherShip = this.game.time.events.loop(Phaser.Timer.SECOND * 0.03, this.animationMothership, this);
-
+            this.loopCreateShips = this.game.time.events.loop(Phaser.Timer.SECOND * 4, this.createShipMotherShip, this);
             //game.state.start('GameState');
         }
     },
@@ -434,6 +443,44 @@ GameSpace.GameState = {
         this.rocketHUD = this.game.add.sprite(this.game.world.width - 120, 16, 'rocket');
         this.rocketHUD.scale.setTo(0.35);
         this.lifeHUD = this.add.text(this.game.world.width - 90, 16, " X " + this.levelData.level1.rocket.life, {fontSize: '32px', fill: '#D0171B'})
+    },
+
+    createShipMotherShip : function(){
+
+        var ship = this.ships.create(this.mothership.position.x, this.mothership.bottom - 30, 'ship1');
+
+        ship.scale.setTo(0.7, 0.7);
+        ship.enableBody = true;
+
+        ship.animations.add('spin', null, 10, true);
+        ship.play('spin');
+
+        var shipmoving = this.game.add.tween(ship);
+        shipmoving.to({x: Math.floor((Math.random() * 960) + 20), y: 650}, 10000);
+        shipmoving.start();
+
+
+
+    },
+
+    overlapRocketShip : function(rocket, ship){
+        ship.kill();
+        this.life -= 1;
+        this.lifeHUD.text = " X " + this.life;
+
+        if(this.life == 0){
+            game.state.start('GameState');
+        }
+    },
+
+    detroiMothership : function(nave, fire){
+        fire.kill();
+        this.lifeMothership -= 1;
+        this.lifeMothershipHUD.text = "Mothership - " + this.lifeMothership;
+
+        if(this.lifeMothership == 0){
+            game.state.start('GameState');
+        }
     }
 
 }
