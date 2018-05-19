@@ -1,6 +1,7 @@
 var GameSpace = GameSpace || {}
 
 var FIRE = 0, EXPLOSION = 1;
+var stateTextFimDeJogo;
 
 GameSpace.GameState = {
     init: function () {
@@ -33,6 +34,8 @@ GameSpace.GameState = {
         this.load.spritesheet('ship3', 'assets/image/ship3_spriteSheet.png', 128, 128, 16, 0, 0);
         this.load.spritesheet('ship4', 'assets/image/ship4_spriteSheet.png', 128, 128, 16, 0, 0);
         this.load.spritesheet('ship5', 'assets/image/ship5_spriteSheet.png', 128, 128, 16, 0, 0);
+        this.load.spritesheet('explode', 'assets/image/explode.png', 128, 128, 8, 0, 0);
+
 
 
         //this.load.image('rocket', 'assets/image/rocket.png');
@@ -40,9 +43,11 @@ GameSpace.GameState = {
         this.load.spritesheet('fire1', 'assets/image/fire1.png', 32, 64);
         this.load.spritesheet('rocketTail', 'assets/image/rocketTail.png', 64, 128);
 
+
         this.load.image('mothership', 'assets/image/mothership.png');
         this.load.image('missile', 'assets/image/missile.png');
         this.load.image('star', 'assets/image/star.png');
+        this.load.image('tiro', 'assets/image/tiro.png');
 
         //carregar arquivo de dados - Configurações json
         this.load.text('level', 'assets/data/level.json');
@@ -75,7 +80,7 @@ GameSpace.GameState = {
 
         this.fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
-        this.fire = this.game.add.weapon(30, 'fire1');
+        this.fire = this.game.add.weapon(30, 'tiro');
 
 
         /* Rocket */
@@ -221,7 +226,7 @@ GameSpace.GameState = {
         var meteorMoving = this.game.add.tween(meteor);
         meteorMoving.to({x: finalX, y: finalY}, this.levelData.level1.meteors.velocityMeteor);
 
-        meteor.scale.setTo((sizeMeteor * 0.5) + 0.5);
+        meteor.scale.setTo((sizeMeteor * 0.3) + 0.3);
         meteor.anchor.setTo(0.5);
 
 
@@ -379,7 +384,7 @@ GameSpace.GameState = {
 
     coletarEstrelas: function (rocket, star) {
         star.kill();
-        this.score += 10;
+        this.score += 20;
         this.txtHUD.text = 'SCORE: ' + this.score;
 
 
@@ -416,6 +421,7 @@ GameSpace.GameState = {
         }
     },
 
+
     morreMeteor : function (rocket, meteor) {
         meteor.kill();
 
@@ -423,26 +429,57 @@ GameSpace.GameState = {
         this.lifeHUD.text = " X " + this.life;
 
         if(this.life == 0){
-            game.state.start('GameState');
+            game.state.start('GameOver');
+            // this.rocket.kill();
+            // this.rocketTail.kill();
+            // stateTextFimDeJogo = this.game.add.text(this.game.world.centerX, this.game.world.centerY, 'GAME OVER \n F5 RESTART', {font: '84px Arial', fill: '#FF0000'});
+            // stateTextFimDeJogo.anchor.setTo(0.5, 0.5);
+
         }
+
+        this.explosao = this.game.add.sprite(meteor.position.x, meteor.position.y,'explode');
+
+        this.explosao.scale.setTo(0.5);
+        this.explosao.animations.add('explode', null, 50, false );
+        this.explosao.play('explode',null, false, true);
+
+
 
     },
 
     morreMothership : function(){
-        game.state.start('GameState');
+        game.state.start('GameOver');
+        // this.rocket.kill();
+        // this.rocketTail.kill();
+        // stateTextFimDeJogo = this.add.text(this.game.world.centerX, this.game.world.centerY, 'GAME OVER \n F5 RESTART', {font: '84px Arial', fill: '#FF0000'});
+        // stateTextFimDeJogo.anchor.setTo(0.5, 0.5);
+
     },
 
     destroiMeteoro : function (fire, meteor) {
+        this.explosao = this.game.add.sprite(meteor.position.x, meteor.position.y,'explode');
+
+        this.explosao.scale.setTo(0.5);
+        this.explosao.animations.add('explode', null, 50, false );
+        this.explosao.play('explode',null, false, true);
+
+        if(this.levelData.config.sound){
+            this.playSound(EXPLOSION);
+        }
+
         meteor.kill();
+        fire.kill();
+
+
     },
 
 
 
     criaHUD : function  (){
-        this.txtHUD = this.add.text(16, 16, 'SCORE: ' + this.score, {fontSize: '32px', fill: '#D0171B'});
+        this.txtHUD = this.add.text(16, 16, 'SCORE: ' + this.score, {fontSize: '32px', fill: '#D0171B',  stroke: '#ffffff', strokeThickness: 10});
         this.rocketHUD = this.game.add.sprite(this.game.world.width - 120, 16, 'rocket');
         this.rocketHUD.scale.setTo(0.35);
-        this.lifeHUD = this.add.text(this.game.world.width - 90, 16, " X " + this.levelData.level1.rocket.life, {fontSize: '32px', fill: '#D0171B'})
+        this.lifeHUD = this.add.text(this.game.world.width - 90, 16, " X " + this.levelData.level1.rocket.life, {fontSize: '32px', fill: '#D0171B', stroke: '#ffffff', strokeThickness: 10})
     },
 
     createShipMotherShip : function(){
@@ -469,7 +506,12 @@ GameSpace.GameState = {
         this.lifeHUD.text = " X " + this.life;
 
         if(this.life == 0){
-            game.state.start('GameState');
+            game.state.start('GameOver');
+            // this.rocket.kill();
+            // this.rocketTail.kill();
+            // stateTextFimDeJogo = this.add.text(this.game.world.centerX, this.game.world.centerY, 'GAME OVER \n F5 RESTART', {font: '84px Arial', fill: '#FF0000'});
+            // stateTextFimDeJogo.anchor.setTo(0.5, 0.5);
+
         }
     },
 
@@ -479,7 +521,8 @@ GameSpace.GameState = {
         this.lifeMothershipHUD.text = "Mothership - " + this.lifeMothership;
 
         if(this.lifeMothership == 0){
-            game.state.start('GameState');
+            game.state.start('Congratulation');
+
         }
     }
 

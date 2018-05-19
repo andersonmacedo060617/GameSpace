@@ -1,10 +1,10 @@
 {
     "config" : {
-        "sound" : false,
-        "music" : false
+        "sound" : true,
+        "music" : true
     },
     "level1":{
-        "pointsObjective" : 100,
+        "pointsObjective" : 20,
         "meteors": {
             "velocityMeteor" : 13000,
             "frequencyMeteor" : 3
@@ -23,8 +23,8 @@
         ],
         "rocket" : {
             "alias" : "rocket",
-            "scaleX" : 0.5,
-            "scaleY" : 0.5,
+            "scaleX" : 0.4,
+            "scaleY" : 0.4,
             "life" : 3
         },
         "mothership": {
@@ -34,7 +34,7 @@
             "maxPositionX" : 800,
             "minPositionX" : 200,
             "speedMovingX" : 2,
-            "life" : 100
+            "life" : 10
         },
 
 
