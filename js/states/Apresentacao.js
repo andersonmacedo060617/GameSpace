@@ -1,14 +1,22 @@
 GameSpace.Apresentacao = {
 
     preload: function () {
-        this.load.image('background1', 'assets/image/background1.png');
+        this.load.image('apresentacao', 'assets/image/apresentacao.png');
     },
 
     create: function () {
-        this.background1 = this.game.add.sprite(0, 0, 'background1');
-        this.apresentacaoText = this.game.add.text(this.game.world.centerX, -100, 'Game Space', {
+        this.background1 = this.game.add.sprite(0, 0, 'apresentacao');
+        this.apresentacaoText = this.game.add.text(this.game.world.centerX, -100, 'Patrulha Espacial', {
             font: '84px Arial',
-            fill: '#0000FF'
+            fill: '#0000FF',
+            stroke: '#ffffff',
+            strokeThickness: 10,
+            fontWeight: 'bold',
+            stroke: '#000000',
+            strokeThickness: 20,
+            fill: '#43d637',
+
+
         });
 
         this.apresentacaoText.anchor.setTo(0.5, 0.5);

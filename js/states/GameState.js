@@ -1,6 +1,6 @@
 var GameSpace = GameSpace || {}
 
-var FIRE = 0, EXPLOSION = 1;
+var FIRE = 0, EXPLOSION = 1, MUSICSTAR= 3;
 var stateTextFimDeJogo;
 
 GameSpace.GameState = {
@@ -54,6 +54,8 @@ GameSpace.GameState = {
 
         this.load.audio('music', 'assets/sound/music.mp3');
         this.load.audio('soundFire', 'assets/sound/fire.mp3');
+        this.load.audio('soundStar', 'assets/sound/star.mp3');
+
 
     },
 
@@ -360,8 +362,10 @@ GameSpace.GameState = {
         var sound = document.createElement("audio");
         if (soundType === EXPLOSION) {
             sound.src = "assets/sound/explosion.mp3";
-        } else {
+        }  else if(soundType === FIRE) {
             sound.src = "assets/sound/fire.mp3";
+        }  else if(soundType === MUSICSTAR) {
+            sound.src = "assets/sound/star.mp3";
         }
 
         sound.addEventListener("canplaythrough", function () {
@@ -386,6 +390,10 @@ GameSpace.GameState = {
         star.kill();
         this.score += 20;
         this.txtHUD.text = 'SCORE: ' + this.score;
+        if(this.levelData.config.sound){
+            this.playSound(MUSICSTAR);
+        }
+
 
 
         if (this.score == this.levelData.level1.pointsObjective) {
@@ -442,6 +450,9 @@ GameSpace.GameState = {
         this.explosao.scale.setTo(0.5);
         this.explosao.animations.add('explode', null, 50, false );
         this.explosao.play('explode',null, false, true);
+        if(this.levelData.config.sound){
+            this.playSound(EXPLOSION);
+        }
 
 
 

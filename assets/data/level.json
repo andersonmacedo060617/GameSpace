@@ -4,7 +4,7 @@
         "music" : true
     },
     "level1":{
-        "pointsObjective" : 20,
+        "pointsObjective" : 100,
         "meteors": {
             "velocityMeteor" : 13000,
             "frequencyMeteor" : 3
@@ -34,7 +34,7 @@
             "maxPositionX" : 800,
             "minPositionX" : 200,
             "speedMovingX" : 2,
-            "life" : 10
+            "life" : 100
         },
 
 
