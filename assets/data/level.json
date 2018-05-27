@@ -1,45 +1,81 @@
-{
-    "config" : {
-        "sound" : true,
-        "music" : true
+﻿{
+  "config": {
+    "sound": false,
+    "music": false
+  },
+  "history1p1": "Ano 2100. \r\n Apos muitos anos achavamos que estar sozinho no universo, \r\n até que tivemos o primeiro contato. \r\n \r\n \r\n  Descobrimos vida fora da Terra. \r\n \r\n \r\n \r\n  Na verdade.....\r\n \r\n",
+  "history1p2": "descobrimos inimigos. \r\n \r\n \r\n \r\n \r\n Para salva o planeta enviamos o melhor nave e o melhor piloto(Zezinho). ",
+  "level1": {
+    "pointsObjective": 100,
+    "meteors": {
+      "velocityMeteor": 13000,
+      "frequencyMeteor": 3
     },
-    "level1":{
-        "pointsObjective" : 100,
-        "meteors": {
-            "velocityMeteor" : 13000,
-            "frequencyMeteor" : 3
-        },
-        "stars" : {
-            "velocityStar" : 11000,
-            "frequencyStar" : 10
-        },
-        "ships" : [
-            {"x": 100, "y": 50, "scale": 1, "alias": "ship"},
-            {"x": 200, "y": 100, "scale": 1, "alias": "ship"},
-            {"x": 300, "y": 150, "scale": 1, "alias": "ship"},
-            {"x": 700, "y": 150, "scale": 1, "alias": "ship"},
-            {"x": 800, "y": 100, "scale": 1, "alias": "ship"},
-            {"x": 900, "y": 50, "scale": 1, "alias": "ship"}
-        ],
-        "rocket" : {
-            "alias" : "rocket",
-            "scaleX" : 0.4,
-            "scaleY" : 0.4,
-            "life" : 3
-        },
-        "mothership": {
-            "alias" : "mothership",
-            "scaleX": 2,
-            "scaleY": 2,
-            "maxPositionX" : 800,
-            "minPositionX" : 200,
-            "speedMovingX" : 2,
-            "life" : 100
-        },
+    "stars": {
+      "velocityStar": 15000,
+      "frequencyStar": 10
+    },
+    "fuels": {
+      "velocityFuel": 11000,
+      "frequencyFuel": 20
+    },
+    "ships": [
+      {
+        "x": 100,
+        "y": 50,
+        "scale": 1,
+        "alias": "ship"
+      },
+      {
+        "x": 200,
+        "y": 100,
+        "scale": 1,
+        "alias": "ship"
+      },
+      {
+        "x": 300,
+        "y": 150,
+        "scale": 1,
+        "alias": "ship"
+      },
+      {
+        "x": 700,
+        "y": 150,
+        "scale": 1,
+        "alias": "ship"
+      },
+      {
+        "x": 800,
+        "y": 100,
+        "scale": 1,
+        "alias": "ship"
+      },
+      {
+        "x": 900,
+        "y": 50,
+        "scale": 1,
+        "alias": "ship"
+      }
+    ],
+    "rocket": {
+      "alias": "rocket",
+      "scaleX": 0.4,
+      "scaleY": 0.4,
+      "life": 3
+    },
+    "mothership": {
+      "alias": "mothership",
+      "scaleX": 1,
+      "scaleY": 1,
+      "maxPositionX": 800,
+      "minPositionX": 200,
+      "speedMovingX": 2,
+      "life": 100
+    },
 
 
-        "angleMaxShips": 80,
-        "angleShipsVariation" : 1
+    "angleMaxShips": 80,
+    "angleShipsVariation": 1
 
-    }
+  }
 }

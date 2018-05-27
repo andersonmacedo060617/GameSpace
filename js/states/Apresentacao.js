@@ -1,4 +1,16 @@
 GameSpace.Apresentacao = {
+    init: function () {
+        //seta a escala do jogo
+        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //alinhamento horizontal 
+        this.scale.pageAlignHorizontally = true;
+        //alinhamento vertical
+        this.scale.pageAlignVertically = true;
+
+        //seta o tamanho da fase
+        this.game.world.setBounds(0, 0, 1000, 592);
+
+    },
 
     preload: function () {
         this.load.image('apresentacao', 'assets/image/apresentacao.png');
@@ -31,7 +43,6 @@ GameSpace.Apresentacao = {
     },
 
     chamaGameState : function () {
-        console.log("Clique");
-        game.state.start('GameState')
+        game.state.start('HistoryState1');
     }
 }

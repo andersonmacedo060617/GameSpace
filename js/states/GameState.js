@@ -48,6 +48,7 @@ GameSpace.GameState = {
         this.load.image('missile', 'assets/image/missile.png');
         this.load.image('star', 'assets/image/star.png');
         this.load.image('tiro', 'assets/image/tiro.png');
+        this.load.image('fuel', 'assets/image/fuel.png');
 
         //carregar arquivo de dados - Configurações json
         this.load.text('level', 'assets/data/level.json');
@@ -60,12 +61,13 @@ GameSpace.GameState = {
     },
 
     create: function () {
+        this.motherShipInScene = false;
 
         //faz parse de arquivos json
         this.levelData = JSON.parse(this.game.cache.getText('level'));
         this.habilitaNave == false;
 
-
+        
 
         this.life = this.levelData.level1.rocket.life;
         this.lifeMothership = this.levelData.level1.mothership.life;
@@ -84,6 +86,9 @@ GameSpace.GameState = {
 
         this.fire = this.game.add.weapon(30, 'tiro');
 
+        
+        this.fuels = this.add.group();
+        this.fuels.enableBody = true;
 
         /* Rocket */
 
@@ -152,6 +157,8 @@ GameSpace.GameState = {
 
         this.loopCreatorStar = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.stars.frequencyStar, this.createStar, this);
 
+        this.loopCreatorFuel = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.fuels.frequencyFuel, this.createAddVelocity, this);
+
 
         this.criaHUD(); 
 
@@ -173,6 +180,7 @@ GameSpace.GameState = {
 
         this.game.physics.arcade.overlap(this.rocket, this.meteors, null, this.morreMeteor, this);
         this.game.physics.arcade.overlap(this.rocket, this.stars, null, this.coletarEstrelas, this);
+        this.game.physics.arcade.overlap(this.rocket, this.fuels, null, this.upVelocity, this);
         this.game.physics.arcade.overlap(this.fire.bullets, this.meteors, null, this.destroiMeteoro, this);
         this.game.physics.arcade.overlap(this.rocket, this.mothership, null, this.morreMothership, this);
         this.game.physics.arcade.overlap(this.rocket, this.ships, null, this.overlapRocketShip, this);
@@ -396,7 +404,8 @@ GameSpace.GameState = {
 
 
 
-        if (this.score == this.levelData.level1.pointsObjective) {
+        if (this.score >= this.levelData.level1.pointsObjective && !this.motherShipInScene) {
+            this.motherShipInScene = true;
             this.loopCreatorStar.loop = false;
             this.habilitaNave == true;
            
@@ -406,8 +415,8 @@ GameSpace.GameState = {
                 this.game.world.centerX,
                 -100,
                 this.levelData.level1.mothership.alias,
-                this.levelData.level1.mothership.scaleX,
-                this.levelData.level1.mothership.scaleY,
+                -this.levelData.level1.mothership.scaleX,
+                -this.levelData.level1.mothership.scaleY,
                 0.5,
                 0.5
             );
@@ -534,6 +543,27 @@ GameSpace.GameState = {
         if(this.lifeMothership == 0){
             game.state.start('Congratulation');
 
+        }
+    },
+
+    createAddVelocity: function () {
+        if (this.rocket.body.maxVelocity.x < 200) {
+
+            addVelocityItem = this.fuels.create(Math.floor((Math.random() * 960) + 20), -100, 'fuel');
+            addVelocityItem.anchor.setTo(0.5);
+            addVelocityItem.scale.setTo(0.1);
+
+            var addVelocityMoving = this.game.add.tween(addVelocityItem);
+            addVelocityMoving.to({ x: Math.floor((Math.random() * 960) + 20), y: 1200 }, this.levelData.level1.fuels.velocityFuel);
+
+            addVelocityMoving.start();
+        }
+    },
+
+    upVelocity: function (rocket, fuel) {
+        fuel.kill();
+        if (this.rocket.body.maxVelocity.x < 200) {
+            this.rocket.body.maxVelocity.setTo(this.rocket.body.maxVelocity.x + 50);
         }
     }
 

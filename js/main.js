@@ -6,6 +6,7 @@ var game = new Phaser.Game(1000,592,Phaser.AUTO);
 game.state.add('GameState', GameSpace.GameState);
 game.state.add('GameOver', GameSpace.GameOver);
 game.state.add('Congratulation', GameSpace.Congratulation);
+game.state.add('HistoryState1', GameSpace.HistoryState1);
 game.state.add('Apresentacao', GameSpace.Apresentacao);
 //iniciar o jogo
 game.state.start('Apresentacao');
