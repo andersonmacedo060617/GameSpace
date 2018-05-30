@@ -3,10 +3,9 @@
     "",
     "\\assets",
     "\\assets\\data",
-    "\\assets\\image",
     "\\js",
     "\\js\\states"
   ],
-  "SelectedNode": "\\assets\\image\\mothership_final.png",
+  "SelectedNode": "\\assets\\data\\level.json",
   "PreviewInSolutionExplorer": false
 }

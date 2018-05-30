@@ -541,7 +541,7 @@ GameSpace.GameState = {
         this.lifeMothershipHUD.text = "Mothership - " + this.lifeMothership;
 
         if(this.lifeMothership == 0){
-            game.state.start('Congratulation');
+            game.state.start('GameState2');
 
         }
     },

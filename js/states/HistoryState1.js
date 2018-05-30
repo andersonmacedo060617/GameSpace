@@ -95,6 +95,6 @@ GameSpace.HistoryState1 = {
     },
 
     chamaGameState: function () {
-        game.state.start('GameState2');
+        game.state.start('GameState');
     }
 }
