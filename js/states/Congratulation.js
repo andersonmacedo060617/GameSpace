@@ -1,7 +1,7 @@
 GameSpace.Congratulation = {
 
     preload: function () {
-        this.load.image('background1', 'assets/image/background1.png');
+        this.load.image('background1', 'assets/image/background4.png');
     },
 
     create: function () {

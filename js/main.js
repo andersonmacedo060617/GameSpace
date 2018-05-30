@@ -8,5 +8,6 @@ game.state.add('GameOver', GameSpace.GameOver);
 game.state.add('Congratulation', GameSpace.Congratulation);
 game.state.add('HistoryState1', GameSpace.HistoryState1);
 game.state.add('Apresentacao', GameSpace.Apresentacao);
+game.state.add('GameState2', GameSpace.GameState2);
 //iniciar o jogo
 game.state.start('Apresentacao');

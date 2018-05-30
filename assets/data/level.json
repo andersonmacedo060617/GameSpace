@@ -77,5 +77,11 @@
     "angleMaxShips": 80,
     "angleShipsVariation": 1
 
+  },
+  "level2": {
+    "meteors": {
+      "velocityMeteor": 8000,
+      "frequencyMeteor": 2
+    }
   }
 }
