@@ -1,13 +1,13 @@
-var GameSpace = GameSpace || {}
+var GameSpace3 = GameSpace3 || {}
 
-var FIRE = 0, EXPLOSION = 1, MUSICSTAR= 3, MUSICVELOCITY=4;
+var FIRE = 0, EXPLOSION = 1, MUSICSTAR = 3, MUSICVELOCITY=4;
 var stateTextFimDeJogo;
 
-GameSpace.GameState = {
+GameSpace.GameState3 = {
     init: function () {
         //seta a escala do jogo
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        //alinhamento horizontal 
+        //alinhamento horizontal
         this.scale.pageAlignHorizontally = true;
         //alinhamento vertical
         this.scale.pageAlignVertically = true;
@@ -23,7 +23,7 @@ GameSpace.GameState = {
     },
 
     preload: function () {
-        this.load.image('background1', 'assets/image/background1.png');
+        this.load.image('background1', 'assets/image/BackgroundFase3.png');
 
         this.load.spritesheet('meteor1', 'assets/image/meteor1_spriteSheet.PNG', 64, 64, 16, 0, 0);
         this.load.spritesheet('meteor2', 'assets/image/meteor2_spriteSheet.png', 64, 64, 16, 0, 0);
@@ -43,14 +43,15 @@ GameSpace.GameState = {
         this.load.spritesheet('fire1', 'assets/image/fire1.png', 32, 64);
         this.load.spritesheet('rocketTail', 'assets/image/rocketTail.png', 64, 128);
 
-
-        this.load.image('mothership', 'assets/image/naveFase1.png');
+        this.load.image('mothership2', 'assets/image/naveFase1.png');
+        this.load.image('mothership3', 'assets/image/nave3.png');
+        this.load.image('mothership4', 'assets/image/ultimoChefe.png');
         this.load.image('missile', 'assets/image/missile.png');
         this.load.image('star', 'assets/image/star.png');
         this.load.image('tiro', 'assets/image/tiro.png');
         this.load.image('fuel', 'assets/image/fuel.png');
 
-        //carregar arquivo de dados - Configurações json
+        //carregar arquivo de dados - Configura��es json
         this.load.text('level', 'assets/data/level.json');
 
         this.load.audio('music', 'assets/sound/music.mp3');
@@ -63,19 +64,22 @@ GameSpace.GameState = {
 
     create: function () {
         this.motherShipInScene = false;
+        this.motherShip2_Kill = false;
+        this.motherShip3_Kill = false;
+        this.motherShip4_Kill = false;
 
         //faz parse de arquivos json
         this.levelData = JSON.parse(this.game.cache.getText('level'));
         this.habilitaNave == false;
 
-        
 
-        this.life = this.levelData.level1.rocket.life;
-        this.lifeMothership = this.levelData.level1.mothership.life;
+
+        this.life = this.levelData.level3.rocket.life;
+        this.lifeMothership = this.levelData.level3.mothership.life;
         this.sound['fire'] = game.add.audio('soundFire');
         this.sound['music'] = game.add.audio('music');
 
-        if(this.levelData.config.music){
+        if (this.levelData.config.music) {
             this.sound['music'].play();
         }
 
@@ -87,7 +91,7 @@ GameSpace.GameState = {
 
         this.fire = this.game.add.weapon(30, 'tiro');
 
-        
+
         this.fuels = this.add.group();
         this.fuels.enableBody = true;
 
@@ -106,21 +110,24 @@ GameSpace.GameState = {
         this.rocket = this.criaSprite(
             this.game.world.centerX,
             this.game.world.centerY,
-            this.levelData.level1.rocket.alias,
-            this.levelData.level1.rocket.scaleX,
-            this.levelData.level1.rocket.scaleY,
+            this.levelData.level3.rocket.alias,
+            this.levelData.level3.rocket.scaleX,
+            this.levelData.level3.rocket.scaleY,
             0.5,
             0.5
         );
 
-        this.stars = this.add.group();
-        this.stars.enableBody = true;
+
 
         this.ships = this.add.group();
         this.ships.enableBody = true;
 
         this.meteors = this.add.group();
         this.meteors.enableBody = true;
+
+        this.ships = this.add.group();
+        this.ships.enableBody = true;
+
 
         this.rocketTail.animations.add('run', null, 5, true);
 
@@ -137,7 +144,6 @@ GameSpace.GameState = {
 
         /*Fim Rocket*/
 
-        
 
         // this.fire.animations.add('fire1', null, 10, true);
         this.fire.trackSprite(this.rocket, 0, 0, false);
@@ -151,24 +157,26 @@ GameSpace.GameState = {
         this.fire.fireRate = 100;
         //console.log(this.rocket);
 
-        
+
         //cria meteoros
         this.createMeteors();
-        this.loopCreatorMeteor = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.meteors.frequencyMeteor, this.createMeteors, this);
+        this.loopCreatorMeteor = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level3.meteors.frequencyMeteor, this.createMeteors, this);
 
-        this.loopCreatorStar = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.stars.frequencyStar, this.createStar, this);
+        // this.loopCreatorStar = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level3.stars.frequencyStar, this.createStar, this);
 
-        this.loopCreatorFuel = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.fuels.frequencyFuel, this.createAddVelocity, this);
+        this.loopCreatorFuel = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level3.fuels.frequencyFuel, this.createAddVelocity, this);
+        this.loopCreateNaves = this.game.time.events.loop(Phaser.Timer.SECOND * 5, this.createShips, this);
 
+        this.criaHUD();
 
-        this.criaHUD(); 
+        this.callMothership('mothership2', 0.8);
 
     },
 
     update: function () {
 
 
-        //this.animationShips();
+        this.animationShips();
 
         //this.animationMothership();
 
@@ -180,12 +188,15 @@ GameSpace.GameState = {
 
 
         this.game.physics.arcade.overlap(this.rocket, this.meteors, null, this.morreMeteor, this);
-        this.game.physics.arcade.overlap(this.rocket, this.stars, null, this.coletarEstrelas, this);
+        // this.game.physics.arcade.overlap(this.rocket, this.stars, null, this.coletarEstrelas, this);
         this.game.physics.arcade.overlap(this.rocket, this.fuels, null, this.upVelocity, this);
         this.game.physics.arcade.overlap(this.fire.bullets, this.meteors, null, this.destroiMeteoro, this);
         this.game.physics.arcade.overlap(this.rocket, this.mothership, null, this.morreMothership, this);
-        this.game.physics.arcade.overlap(this.rocket, this.ships, null, this.overlapRocketShip, this);
+        //this.game.physics.arcade.overlap(this.rocket, this.ships, null, this.overlapRocketShip, this);
         this.game.physics.arcade.overlap(this.mothership, this.fire.bullets, null, this.detroiMothership, this);
+        this.game.physics.arcade.overlap(this.rocket, this.ships, null, this.colisionRocketShip, this);
+
+        this.game.physics.arcade.overlap(this.fire.bullets, this.ships, null, this.destroiNave, this);
     },
 
     createMeteors: function () {
@@ -217,7 +228,7 @@ GameSpace.GameState = {
             initY = -200;
             finalX = Math.floor((Math.random() * 960) + 20);
             finalY = 700;
-        } else {// senão parte inferior da tela
+        } else {// sen�o parte inferior da tela
             initX = Math.floor((Math.random() * 960) + 20);
             initY = 700;
             finalX = Math.floor((Math.random() * 960) + 20);
@@ -235,7 +246,7 @@ GameSpace.GameState = {
 
 
         var meteorMoving = this.game.add.tween(meteor);
-        meteorMoving.to({x: finalX, y: finalY}, this.levelData.level1.meteors.velocityMeteor);
+        meteorMoving.to({ x: finalX, y: finalY }, this.levelData.level3.meteors.velocityMeteor);
 
         meteor.scale.setTo((sizeMeteor * 0.3) + 0.3);
         meteor.anchor.setTo(0.5);
@@ -251,21 +262,21 @@ GameSpace.GameState = {
     },
 
     createShips: function () {
-        this.ships = this.add.group();
-        this.ships.enableBody = true;
         var ship;
         var numShip;
+        console.log("teste");
+        numShip = 1 + Math.floor((Math.random() * 4) + 1);
+        ship = this.ships.create(this.game.world.centerX, -200, 'ship' + numShip);
+        ship.scale.setTo(1);
+        ship.anchor.setTo(0.5);
+        ship.angle = numShip * 9;
 
-        this.levelData.level1.ships.forEach(function (element) {
-            numShip = Math.floor((Math.random() * 5) + 1);
-            ship = this.ships.create(element.x, element.y, 'ship' + numShip);
-            ship.scale.setTo(element.scale);
-            ship.anchor.setTo(0.5);
-            ship.angle = numShip * 9;
+        ship.animations.add('spin', null, 10, true);
+        ship.play('spin');
 
-            ship.animations.add('spin', null, 10, true);
-            ship.play('spin');
-        }, this);
+        var naveMving = this.game.add.tween(ship);
+        naveMving.to({ y: 700, x: this.rocket.position.x }, 8000);
+        naveMving.start();
     },
 
 
@@ -282,8 +293,8 @@ GameSpace.GameState = {
 
     animationShips: function () {
         this.ships.forEach(function (element) {
-            var angleMaxShips = this.levelData.level1.angleMaxShips;
-            var angleShipsVariation = this.levelData.level1.angleShipsVariation;
+            var angleMaxShips = this.levelData.level3.angleMaxShips;
+            var angleShipsVariation = this.levelData.level3.angleShipsVariation;
             if (element.rotatePositive && element.angle < angleMaxShips) {
                 element.angle += angleShipsVariation;
             } else if (!element.rotatePositive && element.angle > -angleMaxShips) {
@@ -300,24 +311,24 @@ GameSpace.GameState = {
 
 
     animationMothership: function () {
-        var maxPositionX = this.levelData.level1.mothership.maxPositionX;
-        var minPositionX = this.levelData.level1.mothership.minPositionX;
-        var speedMovingX = this.levelData.level1.mothership.speedMovingX;
+        var maxPositionX = this.levelData.level3.mothership.maxPositionX;
+        var minPositionX = this.levelData.level3.mothership.minPositionX;
+        var speedMovingX = this.levelData.level3.mothership.speedMovingX;
         var positionX = this.mothership.position.x;
 
 
         if (this.mothership.movingPositive && positionX < maxPositionX) {
-            
+
             this.mothership.position.x += speedMovingX;
         } else if (!this.mothership.movingPositive && positionX > minPositionX) {
-            
+
             this.mothership.position.x += -speedMovingX;
         } else if (this.mothership.movingPositive && positionX >= maxPositionX) {
-            
+
             this.mothership.movingPositive = false;
             this.mothership.position.X = maxPositionX;
         } else if (!this.mothership.movingPositive && positionX <= minPositionX) {
-            
+
             this.mothership.movingPositive = true;
             this.mothership.position.x = minPositionX;
         }
@@ -351,9 +362,9 @@ GameSpace.GameState = {
         }
 
         if (this.fireButton.isDown) {
-            if(this.levelData.config.sound){
-                this.playSound(FIRE);  
-            } 
+            if (this.levelData.config.sound) {
+                this.playSound(FIRE);
+            }
             this.fire.fire();
         }
 
@@ -361,21 +372,22 @@ GameSpace.GameState = {
 
     },
 
-     render : function() {
+    render: function () {
         //game.debug.spriteInfo(this.rocket, 32, 100);
-        
-     },
+
+    },
 
     //criando os sons do jogo
     playSound: function (soundType) {
         var sound = document.createElement("audio");
         if (soundType === EXPLOSION) {
             sound.src = "assets/sound/explosion.mp3";
-        }  else if(soundType === FIRE) {
+        } else if (soundType === FIRE) {
             sound.src = "assets/sound/fire.mp3";
-        }  else if(soundType === MUSICSTAR) {
+        } else if (soundType === MUSICSTAR) {
             sound.src = "assets/sound/star.mp3";
-        } else if (soundType === MUSICVELOCITY) {
+        }
+        else if (soundType === MUSICVELOCITY) {
             sound.src = "assets/sound/pegarVelocidade.mp3";
         }
 
@@ -384,85 +396,26 @@ GameSpace.GameState = {
         }, false);
     },
 
-    createStar: function () {
-
-       // var star = this.stars.getFirstExists(false);
-
-        star = this.stars.create(Math.floor((Math.random() * 960) + 20), -100, 'star');
-
-        var starMoving = this.game.add.tween(star);
-        starMoving.to({x: Math.floor((Math.random() * 960) + 20), y: 1200}, this.levelData.level1.stars.velocityStar);
-
-        starMoving.start();
-
-    },
-
-    coletarEstrelas: function (rocket, star) {
-        star.kill();
-        this.score += 20;
-        this.txtHUD.text = 'SCORE: ' + this.score;
-        if(this.levelData.config.sound){
-            this.playSound(MUSICSTAR);
-        }
 
 
-
-        if (this.score >= this.levelData.level1.pointsObjective && !this.motherShipInScene) {
-            this.motherShipInScene = true;
-            this.loopCreatorStar.loop = false;
-            this.habilitaNave == true;
-           
-
-            //Mothership
-            this.mothership = this.criaSprite(
-                this.game.world.centerX,
-                -100,
-                this.levelData.level1.mothership.alias,
-                -this.levelData.level1.mothership.scaleX,
-                -this.levelData.level1.mothership.scaleY,
-                0.5,
-                0.5
-            );
-            game.physics.arcade.enable(this.mothership);
-
-            this.lifeMothershipHUD = this.add.text(this.game.world.centerX, 50, "Mothership - " + this.lifeMothership, {fontSize: '20px', fill: '#D0171B'})
-            this.lifeMothershipHUD.anchor.setTo(0.5);
-
-            this.mothership.enableBody = true;
-            this.mothership.movingPositive = true;
-
-            var mothershipMoving = this.game.add.tween(this.mothership);
-            mothershipMoving.to({y: 200}, 10000);
-            mothershipMoving.start();
-
-            this.loopMovingMotherShip = this.game.time.events.loop(Phaser.Timer.SECOND * 0.03, this.animationMothership, this);
-            this.loopCreateShips = this.game.time.events.loop(Phaser.Timer.SECOND * 4, this.createShipMotherShip, this);
-            //game.state.start('GameState');
-        }
-    },
-
-
-    morreMeteor : function (rocket, meteor) {
+    morreMeteor: function (rocket, meteor) {
         meteor.kill();
 
         this.life -= 1;
         this.lifeHUD.text = " X " + this.life;
 
-        if(this.life == 0){
+        if (this.life == 0) {
             game.state.start('GameOver');
-            // this.rocket.kill();
-            // this.rocketTail.kill();
-            // stateTextFimDeJogo = this.game.add.text(this.game.world.centerX, this.game.world.centerY, 'GAME OVER \n F5 RESTART', {font: '84px Arial', fill: '#FF0000'});
-            // stateTextFimDeJogo.anchor.setTo(0.5, 0.5);
 
         }
 
-        this.explosao = this.game.add.sprite(meteor.position.x, meteor.position.y,'explode');
+        this.explosao = this.game.add.sprite(meteor.position.x, meteor.position.y, 'explode');
 
         this.explosao.scale.setTo(0.5);
-        this.explosao.animations.add('explode', null, 50, false );
-        this.explosao.play('explode',null, false, true);
-        if(this.levelData.config.sound){
+        this.explosao.anchor.setTo(0.5);
+        this.explosao.animations.add('explode', null, 50, false);
+        this.explosao.play('explode', null, false, true);
+        if (this.levelData.config.sound) {
             this.playSound(EXPLOSION);
         }
 
@@ -470,7 +423,7 @@ GameSpace.GameState = {
 
     },
 
-    morreMothership : function(){
+    morreMothership: function () {
         game.state.start('GameOver');
         // this.rocket.kill();
         // this.rocketTail.kill();
@@ -479,14 +432,15 @@ GameSpace.GameState = {
 
     },
 
-    destroiMeteoro : function (fire, meteor) {
-        this.explosao = this.game.add.sprite(meteor.position.x, meteor.position.y,'explode');
+    destroiMeteoro: function (fire, meteor) {
+        this.explosao = this.game.add.sprite(meteor.position.x, meteor.position.y, 'explode');
 
         this.explosao.scale.setTo(0.5);
-        this.explosao.animations.add('explode', null, 50, false );
-        this.explosao.play('explode',null, false, true);
+        this.explosao.anchor.setTo(0.5);
+        this.explosao.animations.add('explode', null, 50, false);
+        this.explosao.play('explode', null, false, true);
 
-        if(this.levelData.config.sound){
+        if (this.levelData.config.sound) {
             this.playSound(EXPLOSION);
         }
 
@@ -498,16 +452,16 @@ GameSpace.GameState = {
 
 
 
-    criaHUD : function  (){
-        this.txtHUD = this.add.text(16, 16, 'SCORE: ' + this.score, {fontSize: '32px', fill: '#D0171B',  stroke: '#ffffff', strokeThickness: 10});
+    criaHUD: function () {
+        //this.txtHUD = this.add.text(16, 16, 'SCORE: ' + this.score, { fontSize: '32px', fill: '#D0171B', stroke: '#ffffff', strokeThickness: 10 });
         this.rocketHUD = this.game.add.sprite(this.game.world.width - 120, 16, 'rocket');
         this.rocketHUD.scale.setTo(0.35);
-        this.lifeHUD = this.add.text(this.game.world.width - 90, 16, " X " + this.levelData.level1.rocket.life, {fontSize: '32px', fill: '#D0171B', stroke: '#ffffff', strokeThickness: 10})
+        this.lifeHUD = this.add.text(this.game.world.width - 90, 16, " X " + this.levelData.level3.rocket.life, { fontSize: '32px', fill: '#D0171B', stroke: '#ffffff', strokeThickness: 10 })
     },
 
-    createShipMotherShip : function(){
+    createShipMotherShip: function () {
 
-        var ship = this.ships.create(this.mothership.position.x, this.mothership.bottom +30, 'ship1');
+        var ship = this.ships.create(this.mothership.position.x, this.mothership.bottom + 30, 'ship1');
 
         ship.scale.setTo(0.7, 0.7);
         ship.enableBody = true;
@@ -516,19 +470,19 @@ GameSpace.GameState = {
         ship.play('spin');
 
         var shipmoving = this.game.add.tween(ship);
-        shipmoving.to({x: Math.floor((Math.random() * 960) + 20), y: 650}, 10000);
+        shipmoving.to({ x: Math.floor((Math.random() * 960) + 20), y: 650 }, 10000);
         shipmoving.start();
 
 
 
     },
 
-    overlapRocketShip : function(rocket, ship){
+    overlapRocketShip: function (rocket, ship) {
         ship.kill();
         this.life -= 1;
         this.lifeHUD.text = " X " + this.life;
 
-        if(this.life == 0){
+        if (this.life == 0) {
             game.state.start('GameOver');
             // this.rocket.kill();
             // this.rocketTail.kill();
@@ -538,21 +492,40 @@ GameSpace.GameState = {
         }
     },
 
-    detroiMothership : function(nave, fire){
+    detroiMothership: function (nave, fire) {
         fire.kill();
         this.lifeMothership -= 1;
-        this.lifeMothershipHUD.text = "Mothership -  " + this.lifeMothership , {fontSize: '32px', fill: '#D0171B',  stroke: '#ffffff', strokeThickness: 10} ;
+        this.lifeMothershipHUD.text = "Mothership - " + this.lifeMothership;
 
-        if(this.lifeMothership == 0){
-
-            this.explosao = this.game.add.sprite(this.mothership.position.x, this.mothership.position.y,'explode');
-            this.explosao.scale.setTo(0.5);
-            this.explosao.animations.add('explode', null, 50, false );
-            this.explosao.play('explode',null, false, true);
-
-            //game.state.start('GameState2');
+        if (this.lifeMothership == 0 && !this.motherShip2_Kill) {
+            this.motherShip2_Kill = true;
+            this.mothership.kill();
+            this.lifeMothershipHUD.kill();
+            this.callMothership('mothership3', 0.4);
+            this.lifeMothership = 150;
+            this.lifeMothershipHUD.text = "Mothership - " + this.lifeMothership;
 
         }
+
+        if(this.lifeMothership == 0 && this.motherShip2_Kill && !this.motherShip3_Kill){
+            this.motherShip3_Kill = true;
+            this.mothership.kill();
+            this.lifeMothershipHUD.kill();
+            this.callMothership('mothership4', 0.8);
+            this.lifeMothership = 200;
+            this.lifeMothershipHUD.text = "Mothership - " + this.lifeMothership;
+        }
+
+
+
+        if(this.lifeMothership == 0 && this.motherShip2_Kill && this.motherShip3_Kill && !this.motherShip4_Kill){
+            this.motherShip4_Kill = true;
+            game.state.start('Final');
+        }
+
+
+
+
     },
 
     createAddVelocity: function () {
@@ -563,7 +536,7 @@ GameSpace.GameState = {
             addVelocityItem.scale.setTo(0.1);
 
             var addVelocityMoving = this.game.add.tween(addVelocityItem);
-            addVelocityMoving.to({ x: Math.floor((Math.random() * 960) + 20), y: 1200 }, this.levelData.level1.fuels.velocityFuel);
+            addVelocityMoving.to({ x: Math.floor((Math.random() * 960) + 20), y: 1200 }, this.levelData.level3.fuels.velocityFuel);
 
             addVelocityMoving.start();
         }
@@ -580,12 +553,80 @@ GameSpace.GameState = {
         }
     },
 
-    criaExplosao1 : function(positionX, positionY, ){
-        this.explosao = this.game.add.sprite(this.mothership.position.x, this.mothership.position.y,'explode');
-        this.explosao.scale.setTo(0.5);
-        this.explosao.animations.add('explode', null, 50, false );
-        this.explosao.play('explode',null, false, true);
-        
+    colisionRocketShip: function (rocket, nave) {
+
+
+        nave.kill();
+        this.life -= 1;
+        this.lifeHUD.text = " X " + this.life;
+
+        if (this.life == 0) {
+            game.state.start('GameOver');
+            // this.rocket.kill();
+            // this.rocketTail.kill();
+            // stateTextFimDeJogo = this.game.add.text(this.game.world.centerX, this.game.world.centerY, 'GAME OVER \n F5 RESTART', {font: '84px Arial', fill: '#FF0000'});
+            // stateTextFimDeJogo.anchor.setTo(0.5, 0.5);
+
+        }
+
+
+        this.explosao = this.game.add.sprite(nave.position.x, nave.position.y, 'explode');
+        this.explosao.scale.setTo(0.8);
+        this.explosao.anchor.setTo(0.5);
+        this.explosao.animations.add('explode', null, 50, false);
+        this.explosao.play('explode', null, false, true);
+        if (this.levelData.config.sound) {
+            this.playSound(EXPLOSION);
+        }
+    },
+
+    destroiNave: function (fire, nave) {
+        this.explosao = this.game.add.sprite(nave.position.x, nave.position.y, 'explode');
+
+        this.explosao.scale.setTo(0.8);
+        this.explosao.anchor.setTo(0.5);
+        this.explosao.animations.add('explode', null, 50, false);
+        this.explosao.play('explode', null, false, true);
+
+        if (this.levelData.config.sound) {
+            this.playSound(EXPLOSION);
+        }
+
+        nave.kill();
+        fire.kill();
+
+
+
+    },
+
+    callMothership : function(alias, scale){
+
+        //Mothership
+        this.mothership = this.criaSprite(
+            this.game.world.centerX,
+            -100,
+            alias,
+            -scale,
+            -scale,
+            0.5,
+            0.5
+        );
+        game.physics.arcade.enable(this.mothership);
+
+        this.lifeMothershipHUD = this.add.text(this.game.world.centerX, 50, "Mothership - " + this.lifeMothership, { fontSize: '20px', fill: '#D0171B' })
+        this.lifeMothershipHUD.anchor.setTo(0.5);
+
+
+        this.mothership.enableBody = true;
+        this.mothership.movingPositive = true;
+
+        var mothershipMoving = this.game.add.tween(this.mothership);
+        mothershipMoving.to({ y: 200 }, 10000);
+        mothershipMoving.start();
+
+        this.loopMovingMotherShip = this.game.time.events.loop(Phaser.Timer.SECOND * 0.03, this.animationMothership, this);
+        this.loopCreateShips = this.game.time.events.loop(Phaser.Timer.SECOND * 4, this.createShipMotherShip, this);
+
     }
 
 }

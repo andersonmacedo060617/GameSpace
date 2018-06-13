@@ -15,8 +15,8 @@ GameSpace.HistoryState1 = {
 
     preload: function () {
         this.load.image('background', 'assets/image/background4.png');
-        this.load.image('naveMaeFinal', 'assets/image/mothership_final.png')
-        //carregar arquivo de dados - Configurações json
+        this.load.image('naveMaeFinal', 'assets/image/ultimoChefeAbertura.png')
+        //carregar arquivo de dados - Configuraï¿½ï¿½es json
         this.load.text('level', 'assets/data/level.json');
     },
 
@@ -63,11 +63,11 @@ GameSpace.HistoryState1 = {
     },
 
     exibeNaveMae: function(){
-        this.naveMaeFinal = this.game.add.sprite(this.game.world.centerX, 650, 'naveMaeFinal');
-        this.naveMaeFinal.anchor.setTo(0.5, 0);
+        this.naveMaeFinal = this.game.add.sprite(this.game.world.centerX, 900, 'naveMaeFinal');
+        this.naveMaeFinal.anchor.setTo(0.5, 0.5);
 
         this.naveMaeFinalMoving = this.game.add.tween(this.naveMaeFinal);
-        this.naveMaeFinalMoving.to({ y: this.game.world.centerY - (this.naveMaeFinal.width / 2) }, 10000);
+        this.naveMaeFinalMoving.to({ y: this.game.world.centerY  }, 10000);
         this.naveMaeFinalMoving.onComplete.add(this.exibeHistoryP2, this);
         this.naveMaeFinalMoving.start();
     },

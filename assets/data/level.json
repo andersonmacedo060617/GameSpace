@@ -6,7 +6,7 @@
   "history1p1": "Ano 2100. \r\n Apos muitos anos achavamos que estar sozinho no universo, \r\n até que tivemos o primeiro contato. \r\n \r\n \r\n  Descobrimos vida fora da Terra. \r\n \r\n \r\n \r\n  Na verdade.....\r\n \r\n",
   "history1p2": "descobrimos inimigos. \r\n \r\n \r\n \r\n \r\n Para salva o planeta enviamos o melhor nave e o melhor piloto(Zezinho). ",
   "level1": {
-    "pointsObjective": 100,
+    "pointsObjective": 60,
     "meteors": {
       "velocityMeteor": 13000,
       "frequencyMeteor": 3
@@ -17,7 +17,7 @@
     },
     "fuels": {
       "velocityFuel": 11000,
-      "frequencyFuel": 20
+      "frequencyFuel": 15
     },
     "ships": [
       {
@@ -65,8 +65,8 @@
     },
     "mothership": {
       "alias": "mothership",
-      "scaleX": 1,
-      "scaleY": 1,
+      "scaleX": 0.8,
+      "scaleY": 0.8,
       "maxPositionX": 800,
       "minPositionX": 200,
       "speedMovingX": 2,
@@ -79,9 +79,126 @@
 
   },
   "level2": {
+    "pointsObjective": 80,
     "meteors": {
       "velocityMeteor": 8000,
-      "frequencyMeteor": 2
+      "frequencyMeteor": 5
+    },
+
+    "mothership": {
+      "alias": "mothership",
+      "scaleX": 0.4,
+      "scaleY": 0.4,
+      "maxPositionX": 800,
+      "minPositionX": 200,
+      "speedMovingX": 2,
+      "life": 100
+    },
+
+    "rocket": {
+      "alias": "rocket",
+      "scaleX": 0.4,
+      "scaleY": 0.4,
+      "life": 3
+    },
+
+    "fuels": {
+      "velocityFuel": 11000,
+      "frequencyFuel": 20
+    },
+
+    "stars": {
+      "velocityStar": 15000,
+      "frequencyStar": 10
     }
+  },
+
+  "level3": {
+    "pointsObjective": 10,
+    "meteors": {
+      "velocityMeteor": 8000,
+      "frequencyMeteor": 5
+    },
+
+    "mothership": {
+      "alias": "mothership",
+      "scaleX": 0.1,
+      "scaleY": 0.1,
+      "maxPositionX": 800,
+      "minPositionX": 200,
+      "speedMovingX": 2,
+      "life": 100
+    },
+
+    "rocket": {
+      "alias": "rocket",
+      "scaleX": 0.4,
+      "scaleY": 0.4,
+      "life": 3
+    },
+
+    "fuels": {
+      "velocityFuel": 11000,
+      "frequencyFuel": 20
+    },
+
+    "stars": {
+      "velocityStar": 15000,
+      "frequencyStar": 10
+    }
+  },
+  "final": {
+    "positionExplode": [
+      {
+        "x": 50,
+        "y": 100
+      },
+      {
+        "x": 10,
+        "y": 10
+      },
+      {
+        "x": 10,
+        "y": -100
+      },
+      {
+        "x": -100,
+        "y": -100
+      },
+      {
+        "x": -100,
+        "y": 100
+      },
+      {
+        "x": -300,
+        "y": 50
+      },
+      {
+        "x": 350,
+        "y": 40
+      },
+      {
+        "x": 200,
+        "y": -20
+      },
+      {
+        "x": 150,
+        "y": 150
+      },
+      {
+        "x": 150,
+        "y": -200
+      },
+      {
+        "x": -250,
+        "y": -150
+      },
+      {
+        "x": -180,
+        "y": 0
+      }
+
+
+    ] 
   }
 }

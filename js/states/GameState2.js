@@ -1,6 +1,6 @@
 var GameSpace2 = GameSpace2 || {}
 
-var FIRE = 0, EXPLOSION = 1, MUSICSTAR = 3;
+var FIRE = 0, EXPLOSION = 1, MUSICSTAR = 3, MUSICVELOCITY=4;
 var stateTextFimDeJogo;
 
 GameSpace.GameState2 = {
@@ -44,18 +44,19 @@ GameSpace.GameState2 = {
         this.load.spritesheet('rocketTail', 'assets/image/rocketTail.png', 64, 128);
 
 
-        this.load.image('mothership', 'assets/image/mothership_final.png');
+        this.load.image('mothership', 'assets/image/nave3.png');
         this.load.image('missile', 'assets/image/missile.png');
         this.load.image('star', 'assets/image/star.png');
         this.load.image('tiro', 'assets/image/tiro.png');
         this.load.image('fuel', 'assets/image/fuel.png');
 
-        //carregar arquivo de dados - Configurações json
+        //carregar arquivo de dados - Configuraï¿½ï¿½es json
         this.load.text('level', 'assets/data/level.json');
 
         this.load.audio('music', 'assets/sound/music.mp3');
         this.load.audio('soundFire', 'assets/sound/fire.mp3');
         this.load.audio('soundStar', 'assets/sound/star.mp3');
+        this.load.audio('soundStar', 'assets/sound/pegarVelocidade.mp3');
 
 
     },
@@ -69,8 +70,8 @@ GameSpace.GameState2 = {
 
 
 
-        this.life = this.levelData.level1.rocket.life;
-        this.lifeMothership = this.levelData.level1.mothership.life;
+        this.life = this.levelData.level2.rocket.life;
+        this.lifeMothership = this.levelData.level2.mothership.life;
         this.sound['fire'] = game.add.audio('soundFire');
         this.sound['music'] = game.add.audio('music');
 
@@ -105,9 +106,9 @@ GameSpace.GameState2 = {
         this.rocket = this.criaSprite(
             this.game.world.centerX,
             this.game.world.centerY,
-            this.levelData.level1.rocket.alias,
-            this.levelData.level1.rocket.scaleX,
-            this.levelData.level1.rocket.scaleY,
+            this.levelData.level2.rocket.alias,
+            this.levelData.level2.rocket.scaleX,
+            this.levelData.level2.rocket.scaleY,
             0.5,
             0.5
         );
@@ -158,9 +159,9 @@ GameSpace.GameState2 = {
         this.createMeteors();
         this.loopCreatorMeteor = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level2.meteors.frequencyMeteor, this.createMeteors, this);
 
-        this.loopCreatorStar = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.stars.frequencyStar, this.createStar, this);
+        this.loopCreatorStar = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level2.stars.frequencyStar, this.createStar, this);
 
-        this.loopCreatorFuel = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level1.fuels.frequencyFuel, this.createAddVelocity, this);
+        this.loopCreatorFuel = this.game.time.events.loop(Phaser.Timer.SECOND * this.levelData.level2.fuels.frequencyFuel, this.createAddVelocity, this);
         this.loopCreateNaves = this.game.time.events.loop(Phaser.Timer.SECOND * 5, this.createShips, this);
 
         this.criaHUD();
@@ -222,7 +223,7 @@ GameSpace.GameState2 = {
             initY = -200;
             finalX = Math.floor((Math.random() * 960) + 20);
             finalY = 700;
-        } else {// senão parte inferior da tela
+        } else {// senï¿½o parte inferior da tela
             initX = Math.floor((Math.random() * 960) + 20);
             initY = 700;
             finalX = Math.floor((Math.random() * 960) + 20);
@@ -287,8 +288,8 @@ GameSpace.GameState2 = {
 
     animationShips: function () {
         this.ships.forEach(function (element) {
-            var angleMaxShips = this.levelData.level1.angleMaxShips;
-            var angleShipsVariation = this.levelData.level1.angleShipsVariation;
+            var angleMaxShips = this.levelData.level2.angleMaxShips;
+            var angleShipsVariation = this.levelData.level2.angleShipsVariation;
             if (element.rotatePositive && element.angle < angleMaxShips) {
                 element.angle += angleShipsVariation;
             } else if (!element.rotatePositive && element.angle > -angleMaxShips) {
@@ -305,9 +306,9 @@ GameSpace.GameState2 = {
 
 
     animationMothership: function () {
-        var maxPositionX = this.levelData.level1.mothership.maxPositionX;
-        var minPositionX = this.levelData.level1.mothership.minPositionX;
-        var speedMovingX = this.levelData.level1.mothership.speedMovingX;
+        var maxPositionX = this.levelData.level2.mothership.maxPositionX;
+        var minPositionX = this.levelData.level2.mothership.minPositionX;
+        var speedMovingX = this.levelData.level2.mothership.speedMovingX;
         var positionX = this.mothership.position.x;
 
 
@@ -381,6 +382,9 @@ GameSpace.GameState2 = {
         } else if (soundType === MUSICSTAR) {
             sound.src = "assets/sound/star.mp3";
         }
+        else if (soundType === MUSICVELOCITY) {
+        sound.src = "assets/sound/pegarVelocidade.mp3";
+}
 
         sound.addEventListener("canplaythrough", function () {
             sound.play();
@@ -394,7 +398,7 @@ GameSpace.GameState2 = {
         star = this.stars.create(Math.floor((Math.random() * 960) + 20), -100, 'star');
 
         var starMoving = this.game.add.tween(star);
-        starMoving.to({ x: Math.floor((Math.random() * 960) + 20), y: 1200 }, this.levelData.level1.stars.velocityStar);
+        starMoving.to({ x: Math.floor((Math.random() * 960) + 20), y: 1200 }, this.levelData.level2.stars.velocityStar);
 
         starMoving.start();
 
@@ -410,19 +414,20 @@ GameSpace.GameState2 = {
 
 
 
-        if (this.score >= this.levelData.level1.pointsObjective && !this.motherShipInScene) {
+        if (this.score >= this.levelData.level2.pointsObjective && !this.motherShipInScene) {
             this.motherShipInScene = true;
             this.loopCreatorStar.loop = false;
             this.habilitaNave == true;
+
 
 
             //Mothership
             this.mothership = this.criaSprite(
                 this.game.world.centerX,
                 -100,
-                this.levelData.level1.mothership.alias,
-                -this.levelData.level1.mothership.scaleX,
-                -this.levelData.level1.mothership.scaleY,
+                this.levelData.level2.mothership.alias,
+                -this.levelData.level2.mothership.scaleX,
+                -this.levelData.level2.mothership.scaleY,
                 0.5,
                 0.5
             );
@@ -441,7 +446,7 @@ GameSpace.GameState2 = {
             this.loopMovingMotherShip = this.game.time.events.loop(Phaser.Timer.SECOND * 0.03, this.animationMothership, this);
             this.loopCreateShips = this.game.time.events.loop(Phaser.Timer.SECOND * 4, this.createShipMotherShip, this);
 
-            this.l
+
             
             //game.state.start('GameState');
         }
@@ -510,7 +515,7 @@ GameSpace.GameState2 = {
         this.txtHUD = this.add.text(16, 16, 'SCORE: ' + this.score, { fontSize: '32px', fill: '#D0171B', stroke: '#ffffff', strokeThickness: 10 });
         this.rocketHUD = this.game.add.sprite(this.game.world.width - 120, 16, 'rocket');
         this.rocketHUD.scale.setTo(0.35);
-        this.lifeHUD = this.add.text(this.game.world.width - 90, 16, " X " + this.levelData.level1.rocket.life, { fontSize: '32px', fill: '#D0171B', stroke: '#ffffff', strokeThickness: 10 })
+        this.lifeHUD = this.add.text(this.game.world.width - 90, 16, " X " + this.levelData.level2.rocket.life, { fontSize: '32px', fill: '#D0171B', stroke: '#ffffff', strokeThickness: 10 })
     },
 
     createShipMotherShip: function () {
@@ -553,7 +558,6 @@ GameSpace.GameState2 = {
 
         if (this.lifeMothership == 0) {
             game.state.start('Congratulation');
-
         }
     },
 
@@ -565,7 +569,7 @@ GameSpace.GameState2 = {
             addVelocityItem.scale.setTo(0.1);
 
             var addVelocityMoving = this.game.add.tween(addVelocityItem);
-            addVelocityMoving.to({ x: Math.floor((Math.random() * 960) + 20), y: 1200 }, this.levelData.level1.fuels.velocityFuel);
+            addVelocityMoving.to({ x: Math.floor((Math.random() * 960) + 20), y: 1200 }, this.levelData.level2.fuels.velocityFuel);
 
             addVelocityMoving.start();
         }
@@ -575,6 +579,10 @@ GameSpace.GameState2 = {
         fuel.kill();
         if (this.rocket.body.maxVelocity.x < 200) {
             this.rocket.body.maxVelocity.setTo(this.rocket.body.maxVelocity.x + 50);
+        }
+
+        if(this.levelData.config.sound){
+            this.playSound(MUSICVELOCITY);
         }
     },
 
