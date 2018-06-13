@@ -550,7 +550,7 @@ GameSpace.GameState = {
             this.explosao.animations.add('explode', null, 50, false );
             this.explosao.play('explode',null, false, true);
 
-            //game.state.start('GameState2');
+            game.state.start('GameState2');
 
         }
     },
